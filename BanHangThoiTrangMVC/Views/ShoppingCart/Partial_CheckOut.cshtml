@@ -1,0 +1,191 @@
+﻿@model BanHangThoiTrangMVC.Models.OrderViewModel
+@{
+    if (ViewBag.User != null)
+    {
+        var user = (BanHangThoiTrangMVC.Models.ApplicationUser)ViewBag.User;
+    }
+}
+<style>
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Màu đen mờ */
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .loading {
+        display: inline-block;
+        border: 4px solid #f3f3f3; /* Màu viền xám */
+        border-top: 4px solid #3498db; /* Màu viền xanh dương */
+        border-radius: 50%;
+        width: 100px;
+        height: 30px;
+        animation: spin 2s linear infinite;
+        border-width: 8px; /* Phóng to viền */
+        width: 80px; /* Phóng to biểu tượng */
+        height: 80px; /* Phóng to biểu tượng */
+        font-size: 300px;
+        color: darkturquoise;
+    }
+
+    .loading-text {
+        font-size: 50px; /* Phóng to chữ */
+        margin-top: 15px; /* Khoảng cách giữa biểu tượng và chữ */
+        color: darkturquoise;
+    }
+
+    .loading-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: darkturquoise; /* Màu chữ Loading */
+        z-index: 10000;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+
+@using (Ajax.BeginForm("CheckOut", "Shoppingcart", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "load_data",
+    OnSuccess = "OnSuccessCO",
+    OnFailure = "OnFailure",
+    OnBegin = "OnBeginCO"
+
+}, new { @Id = "myForm" }))
+{
+    <script>
+        function OnBeginCO() {
+            $('#btnCheckOut').attr("disabled", "disabled");
+            $('#load_send').html('<h2>Đang gửi....</h2>');
+        }
+        function OnSuccessCO(res) {
+            if (res.Success) {
+                if (res.Code == 1) {
+                    location.href = "/ShoppingCart/CheckOutSuccess";
+                }
+                else {
+                    location.href = res.Url;
+                }
+            }
+        }
+        function confirmPayment() {
+            var address = $('input[name="Address"]').val().trim(); // Get the value of the Address field
+
+            if (address === '') {
+                alert('Vui lòng nhập địa chỉ.');
+                return;
+            }
+            if (confirm("Bạn có chắc muốn thực hiện thanh toán không?")) {
+                $('#loadingOverlay').show();
+                $('#myForm').submit();
+            } else {
+                $('#btnCheckOut').removeAttr("disabled");
+                $('#load_send').html('');
+            }
+        }
+
+        /*$(document).ready(function () {
+            $('#btnCheckOut').click(function (event) {
+                event.preventDefault();
+                confirmPayment();
+            });
+        });*/
+        $(document).ready(function () {
+            $('#btnCheckOut').click(function (event) {
+                event.preventDefault();
+                /*$('#loadingOverlay').show(); // Hiển thị lớp mờ khi bắt đầu gửi dữ liệu*/
+                confirmPayment();
+            });
+        });
+                                                                                                            //function OnFailure() { //}
+    </script>
+    @Html.AntiForgeryToken()
+    <h3>Thông tin khách hàng</h3>
+    if (!Request.IsAuthenticated)
+    {
+        <div class="form-group">
+            <label>Họ tên khách hàng</label>
+            <input type="text" name="CustomerName" required class="form-control" autocomplete="off" />
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" name="Phone" class="form-control" autocomplete="off" />
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ</label>
+            <input type="text" name="Address" class="form-control" autocomplete="off" />
+        </div>
+    }
+    else
+    {
+        var user = (BanHangThoiTrangMVC.Models.ApplicationUser)ViewBag.User;
+        <div class="form-group">
+            <label>Họ tên khách hàng</label>
+            <input type="text" name="CustomerName" value="@user.Fullname" required class="form-control" autocomplete="off" readonly/>
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" name="Phone" value="@user.Phone" class="form-control" autocomplete="off" readonly/>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="text" name="Email" value="@user.Email" class="form-control" autocomplete="off" readonly/>
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ</label>
+            <input type="text" name="Address" class="form-control" autocomplete="off" />
+        </div>
+    }
+
+    <div class="form-group">
+        <label>Hình thức thanh toán</label>
+        <select class="form-control" name="TypePayment" id="drTypePayment">
+            <option value="1" selected>COD</option>
+            <option value="2">Chuyển khoản</option>
+        </select>
+    </div>
+    <div class="form-group" id="load_form_payment" style="display:none;">
+        <h4> <label>Chọn phương thức thanh toán:</label><br /></h4>
+        <h5>Cách 1: Chuyển hướng sang VNPAY chọn phương thức thanh toán</h5>
+        <label><input type="radio" name="TypePaymentVN" value="0" checked /> Cổng thanh toán VNPAYQR </label>
+        @*<h5>Cách 2: Tách phương thức thanh toán tại site của Merchant</h5>
+        <label><input type="radio" name="TypePaymentVN" value="1" /> Thanh toán qua ứng dụng hỗ trợ VNPAYQR </label><br />
+        <label><input type="radio" name="TypePaymentVN" value="2" /> ATM-Tài khoản ngân hàng nội địa </label><br />
+        <label><input type="radio" name="TypePaymentVN" value="3" /> Thanh toán qua thẻ quốc tế </label><br />*@
+    </div>
+    <div class="form-group" id="load_send"></div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-block btn-success" id="btnCheckOut">Đặt hàng</button>
+    </div>
+
+    <div class="overlay" id="loadingOverlay">
+        <div class="loading-container">
+            <div class="loading"></div>
+            <p class="loading-text">Đang Thanh Toán</p>
+        </div>
+    </div>
+
+
+}

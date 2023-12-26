@@ -1,0 +1,111 @@
+﻿@model PagedList.IPagedList<BanHangThoiTrangMVC.Models.EF.Posts>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Bài Viết";
+    @*ViewBag.SeoDescription = Model.SeoDescription;
+        ViewBag.SeoKeyWord = Model.SeoKeywords;*@
+}
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_responsive.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/main_styles.css">
+<!-- Slider -->
+<style>
+    .news_section_container {
+        margin-top: 180px;
+    }
+
+    .row-item-new {
+        margin-bottom: 20px;
+    }
+
+    .title-news {
+        font-size: 24px;
+        border-bottom: 1px solid;
+        padding: 15px 0;
+        margin-bottom: 25px;
+    }
+
+    .img-box img {
+        max-width: 160px;
+        margin-left: 60px;
+        max-height: 100%;
+    }
+
+    hr.newhr {
+        border: 0.5px solid;
+        border-radius: 1px;
+    }
+
+    .description-box {
+        font-size: 20px;
+        width: 700px;
+        height: 100px;
+    }
+</style>
+
+<div class="container news_section_container">
+    <div class="row">
+        <div class="col product_section clearfix">
+
+            <!-- Breadcrumbs -->
+
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Tin Tức, Bài Viết</a></li>
+                </ul>
+            </div>
+            <div class="col-sm"></div>
+            <div class="col-sm" style="padding-left: 600px">
+                @using (Html.BeginForm("Index", "News", FormMethod.Get, new { }))
+                {
+                    <div class="input-group input-group-sm">
+                        @Html.TextBox("Searchtext", null, new { @class = "form-control" })
+                        @*<input type="text" name="searchtext" class="form-control" />*@
+                        <span class="input-group-append">
+                            <button type="submit" class="btn btn-info btn-flat">Tìm Kiếm</button>
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h1 class="title-news">Tin Tức, Bài Viết</h1>
+        </div>
+    </div>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="row row-item-new">
+                <div class="col-md-3">
+                    <div class="img-box">
+                        <a href="chi-tiet-bai-viet/@item.Alias-n@(item.Id)" title="@item.Title"><img src="@item.Image" alt="@item.Title" /></a>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="content-box">
+                        <h3><a href="chi-tiet-bai-viet/@item.Alias-n@(item.Id)" title="@item.Title">@item.Title</a></h3>
+                        <div class="description-box">
+                            @item.Description
+                        </div>
+                    </div>
+                    <div class="content-box">
+                        <div class="description-box">
+                            @item.CreateDate
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr class="newhr" />
+
+        }
+        <div class="row">
+            <div class="col-12"></div>
+            <div class="col-12" style="text-align:center;">
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+            </div>
+        </div>
+    }
+
+</div>

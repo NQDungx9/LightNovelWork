@@ -1,0 +1,119 @@
+﻿@model BanHangThoiTrangMVC.Models.EF.Posts
+@{
+    ViewBag.Title = Model.Title;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/main_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_responsive.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/main_styles.css"><!-- Slider -->
+<style>
+    .news_section_container {
+        margin-top: 180px;
+    }
+
+    .row-item-new {
+        margin-bottom: 20px;
+    }
+
+    .title-news {
+        font-size: 24px;
+        border-bottom: 1px solid;
+        padding: 15px 0;
+        margin-bottom: 25px;
+    }
+
+    .img-box img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    #rd-side_icon {
+        /* background-color: #fff; */
+        /* background-color: #eee; */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        bottom: 30px;
+        cursor: pointer;
+        font-weight: 700;
+        opacity: 1;
+        position: fixed;
+        right: 30px;
+        z-index: 9999;
+    }
+
+    #mainpart.reading-page.style-4,
+    #mainpart.reading-page.style-4
+    #rd-side_icon {
+        background-color: #eae4d3;
+    }
+
+    #myBtn {
+        color: #007bff;
+    }
+</style>
+<div class="container news_section_container">
+    <div class="breadcrumbs d-flex flex-row align-items-center">
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/Article"><i class="fa fa-angle-right" aria-hidden="true"></i>Tin Tức, Bài Viết</a></li>
+            <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>@Model.Title</a></li>
+        </ul>
+    </div>
+    <section id="rd-side_icon" class="none force-block-l" style="padding: 10px; background-color: antiquewhite;">
+        <section id="rd-side_icon" class="none force-block-l" style="padding: 10px; background-color: antiquewhite;">
+            <a class="btn" style="font-size:30px" title="Go to top" id="myBtn" onclick="topFunction()"><i class="fa fa-arrow-up"></i></a>
+            <hr />
+            <a class="btn" href="/home" style="font-size:30px"><i class="fa fa-home"></i></a>
+            @*<br />*@<hr />
+            <a class="btn" href="/Article" style="font-size:30px"><i class="fa fa-bars"></i></a>
+        </section>
+        <!--<hr />
+        <a class="btn" href="/home" style="font-size:30px"><i class="fa fa-home"></i></a>-->
+        @*<br />*@
+        <!--<hr />
+        <a class="btn" href="/cong-novels" style="font-size:30px"><i class="fa fa-bars"></i></a>-->
+    </section>
+    @if (Model != null)
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="title-news"> @Model.Title</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @Model.Description
+            </div>
+            <div class="col-md-12">
+                @Html.Raw(Model.Detail)
+            </div>
+        </div>
+    }
+
+</div>
+@section scripts{
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("myBtn");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+}
+

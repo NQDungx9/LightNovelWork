@@ -1,0 +1,84 @@
+﻿@model IEnumerable<BanHangThoiTrangMVC.Models.ShoppingCartItem>
+@using BanHangThoiTrangMVC.Common
+<table class="table">
+    <tr class="text-center">
+        <th>STT</th>
+        <th>Ảnh sản phẩm</th>
+        <th>Tên sản phẩm</th>
+        <th>Danh mục</th>
+        <th>Giá</th>
+
+        <th style="width:100px;">Số lượng</th>
+        <th>Thành tiền</th>
+        <th style="width:200px;">
+
+        </th>
+    </tr>
+    @if (Model != null && Model.Any())
+    {
+        var i = 0;
+        var tongtien = decimal.Zero;
+        foreach (var item in Model)
+        {
+            tongtien += item.TotalPrice;
+            <tr class="text-center" id="trow_@item.ProductId" data-quantity="@item.Quantity">
+                <td>@(i+1)</td>
+                <td><img src="@item.ProductImg" width="60" /></td>
+                <td>
+                    <a href="/chi-tiet/@item.Alias-p@(item.ProductId)">
+                        @item.ProductName
+                    </a>
+                </td>
+                <td>@item.CategoryName</td>
+                <td>@Common.FormatNumber(item.Price, 0)</td>
+                <td>
+                    <input type="number" class="form-control" id="Quantity_@item.ProductId" value="@item.Quantity" min="1" max="@item.Quantity" />
+                    @*@item.Quantity*@
+                </td>
+                <th>@Common.FormatNumber(item.TotalPrice, 2)</th>
+                <td>
+                    <a href="#" data-id="@item.ProductId" class="btn btn-sm btn-danger btnDelete">Xóa</a>
+                    <a href="#" data-id="@item.ProductId" class="btn btn-sm btn-success btnUpdate">Cập nhật</a>
+                    @*<a href="/chi-tiet/@item.Alias-p@(item.ProductId)" class="btn btn-sm btn-success">Cập Nhật</a>*@
+                </td>
+            </tr>
+            i++;
+        }
+        <tr>
+            <th colspan="6" class="text-right">Tổng: </th>
+            <th class="text-center">@Common.FormatNumber(tongtien, 0)</th>
+            <th></th>
+        </tr>
+
+    }
+    else
+    {
+        <tr>
+            <th colspan="7">Không có sản phẩm trong giỏ hàng!!</th>
+        </tr>
+    }
+</table>
+@section scripts{
+    <script>
+        function Update(id, quantity) {
+            var currentQuantity = $('#trow_' + id).data('quantity');
+            if (parseInt(quantity) > parseInt(currentQuantity)) {
+                alert('Số lượng mới vượt quá số lượng hiện có trong kho!');
+                return; // Ngăn chặn gửi yêu cầu nếu số lượng mới lớn hơn số lượng hiện có
+            }
+
+            // Tiếp tục gửi yêu cầu AJAX cập nhật số lượng
+            $.ajax({
+                url: '/shoppingcart/Update',
+                type: 'POST',
+                data: { id: id, quantity: quantity },
+                success: function (rs) {
+                    if (rs.Success) {
+                        LoadCart();
+                    }
+                }
+            });
+        }
+    </script>
+}
+

@@ -1,0 +1,275 @@
+﻿@using PagedList
+@{
+    ViewBag.Title = "Thống Kê";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.7/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>Thống kê</h1>
+            </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Thống kê</li>
+                </ol>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label for="selectMonth">Chọn tháng:</label>
+                <select id="selectMonth" class="form-control" style="width: 300px;">
+                    <option value="0">-Chọn Tháng-</option>
+                    <option value="1">Tháng 1</option>
+                    <option value="2">Tháng 2</option>
+                    <option value="2">Tháng 3</option>
+                    <option value="2">Tháng 4</option>
+                    <option value="2">Tháng 5</option>
+                    <option value="2">Tháng 6</option>
+                    <option value="2">Tháng 7</option>
+                    <option value="2">Tháng 8</option>
+                    <option value="2">Tháng 9</option>
+                    <option value="2">Tháng 10</option>
+                    <option value="2">Tháng 11</option>
+                    <option value="12">Tháng 12</option>
+                </select>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="chart">
+                        <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+
+                    <div class="row" style="padding-top: 100px;">
+                        <div class="col-lg-6 col-6">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <p>Tổng Doanh Thu</p>
+                                    <h3><span id="totalDoanhThu"></span> VND</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-stats-bars"></i>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-lg-6 col-6">
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <p>Tổng Hóa Đơn</p>
+                                    <h3><span id="totalOrderCount"></span> Hóa Đơn</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                            </div>
+                        </div>*@
+                        <div class="col-lg-6 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <p>Tổng Lợi Nhuận</p>
+                                    <h3><span id="totalLoiNhuan"></span><sup style="font-size: 20px"></sup> VND</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-stats-bars"></i>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-lg-6 col-6">
+                            <div class="small-box bg-success">
+                                <div class="inner">
+                                    <p>Tổng Sản Phẩm</p>
+                                    <h3><span id="totalProductCount"></span><sup style="font-size: 20px"></sup> Sản Phẩm</h3>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-bag"></i>
+                                </div>
+                            </div>
+                        </div>*@
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <table id="dataTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Ngày</th>
+                                <th>Doanh thu</th>
+                                <th>Lợi nhuận</th>
+                            </tr>
+                        </thead>
+                        <tbody id="load_data"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer">
+        </div>
+        <!-- /.card-footer-->
+    </div>
+    <!-- /.card -->
+
+</section>
+@section scripts{
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.7/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.7/js/jquery.dataTables.min.js"></script>
+
+    <script src="~/Content/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/Content/clients/plugins/chart.js/Chart.min.js"></script>
+    <script src="~/Content/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/Content/clients/plugins/chart.js/Chart.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.7/js/jquery.dataTables.min.js"></script> <!-- Thêm thư viện DataTables -->
+    <script>
+        $(function () {
+            /* ChartJS
+             * -------
+             * Here we will create a few charts using ChartJS
+             */
+            var arrDoanhThu = [];
+            var arrLoiNhuan = [];
+            var arrDate = [];
+            var totalDoanhThu;
+            var totalLoiNhuan;
+            var totalOrderCount;
+            var totalProductCount;
+
+            $.ajax({
+                url: '/Statistical/GetStatistical',
+                type: 'GET',
+                data: { fromDate: '', toDate: '' },
+                success: function (rs) {
+                    totalDoanhThu = rs.TotalDoanhThu;
+                    totalLoiNhuan = rs.TotalLoiNhuan;
+                    totalOrderCount = rs.TotalOrderCount;
+                    totalProductCount = rs.TotalProductCount
+
+                    $.each(rs.Data, function (i, item) {
+                        var strDate = moment(item.Date).format('DD/MM/yyyy');
+                        arrDate.push(strDate);
+                        arrDoanhThu.push(item.DoanhThu);
+                        arrLoiNhuan.push(item.LoiNhuan);
+                    });
+
+                    var areaChartData = {
+                        labels: arrDate,
+                        datasets: [
+                            {
+                                label: 'Lợi nhuận',
+                                backgroundColor: 'rgba(60,141,188,0.9)',
+                                borderColor: 'rgba(60,141,188,0.8)',
+                                pointRadius: false,
+                                pointColor: '#3b8bba',
+                                pointStrokeColor: 'rgba(60,141,188,1)',
+                                pointHighlightFill: '#fff',
+                                pointHighlightStroke: 'rgba(60,141,188,1)',
+                                data: arrLoiNhuan
+                            },
+                            {
+                                label: 'Danh thu',
+                                backgroundColor: 'rgba(210, 214, 222, 1)',
+                                borderColor: 'rgba(210, 214, 222, 1)',
+                                pointRadius: false,
+                                pointColor: 'rgba(210, 214, 222, 1)',
+                                pointStrokeColor: '#c1c7d1',
+                                pointHighlightFill: '#fff',
+                                pointHighlightStroke: 'rgba(220,220,220,1)',
+                                data: arrDoanhThu
+                            },
+                        ]
+                    };
+
+                    //-------------
+                    //- BAR CHART -
+                    //-------------
+                    var barChartCanvas = $('#barChart').get(0).getContext('2d');
+                    var barChartData = $.extend(true, {}, areaChartData);
+                    var temp0 = areaChartData.datasets[0];
+                    var temp1 = areaChartData.datasets[1];
+                    barChartData.datasets[0] = temp1;
+                    barChartData.datasets[1] = temp0;
+
+                    var barChartOptions = {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        datasetFill: false
+                    };
+
+                    new Chart(barChartCanvas, {
+                        type: 'bar',
+                        data: barChartData,
+                        options: barChartOptions
+                    });
+
+                    $('#totalDoanhThu').text(totalDoanhThu);
+                    $('#totalLoiNhuan').text(totalLoiNhuan);
+                    $('#totalOrderCount').text(totalOrderCount);
+                    $('#totalProductCount').text(totalProductCount);
+                    load_data(rs.Data);
+                }
+            });
+
+            function load_data(data) {
+                var strHtml = "";
+                $.each(data, function (i, item) {
+                    var strDate = moment(item.Date).format('DD/MM/yyyy');
+                    strHtml += "<tr>";
+                    strHtml += "<td>" + (i + 1) + "</td>";
+                    strHtml += "<td>" + strDate + "</td>";
+                    strHtml += "<td>" + item.DoanhThu + "</td>";
+                    if (item.LoiNhuan >= 0) {
+                        strHtml += "<td>" + item.LoiNhuan + " <i class='fas fa-angle-double-up' style='color:green;'></i></td>";
+                    } else {
+                        strHtml += "<td>" + item.LoiNhuan + " <i class='fas fa-angle-double-down' style='color:red;'></i></td>";
+                    }
+                    strHtml += "</tr>";
+                });
+                $('#load_data').html(strHtml);
+            }
+        });
+
+
+
+        function load_data(data) {
+            var strHtml = "";
+            $.each(data, function (i, item) {
+                var strDate = moment(item.Date).format('DD/MM/yyyy');
+                strHtml += "<tr>";
+                strHtml += "<td>" + (i + 1) + "</td>";
+                strHtml += "<td>" + strDate + "</td>";
+                strHtml += "<td>" + item.DoanhThu + "</td>";
+                if (item.DoanhThu >= 0) {
+                    strHtml += "<td>" + item.LoiNhuan + " <i class='fas fa-angle-double-up' style='color:green;'></i></td>"; // Arrow lên
+                } else {
+                    strHtml += "<td>" + item.LoiNhuan + " <i class='fas fa-angle-double-down' style='color:red;'></i></td>"; // Arrow xuống
+                }
+                strHtml += "</tr>";
+            });
+            $('#load_data').html(strHtml);
+        }
+    </script>
+}
+

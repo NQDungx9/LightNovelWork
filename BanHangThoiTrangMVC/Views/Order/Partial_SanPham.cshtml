@@ -1,0 +1,42 @@
+﻿@model IEnumerable<BanHangThoiTrangMVC.Models.EF.OrderDetail>
+<style>
+    table.table {
+        border: 1px solid #000; /* Đặt viền đậm với độ dày là 2px */
+        border-collapse: collapse; /* Kết hợp các đường viền để chúng không trùng lấn */
+    }
+
+        table.table th,
+        table.table td {
+            border: 1px solid #000; /* Đặt viền cho các ô trong bảng */
+            padding: 8px; /* Tạo khoảng cách giữa nội dung và viền */
+        }
+</style>
+@if (Model != null && Model.Any())
+{
+    var i = 1;
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Giá</th>
+                <th>Số Lượng</th>
+                <th>Thành Tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.Product.Title</td>
+                    <td>@item.Price</td>
+                    <td>@item.Quantity</td>
+                    <td>@BanHangThoiTrangMVC.Common.Common.FormatNumber((item.Price * item.Quantity), 0)</td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}
+

@@ -1,0 +1,226 @@
+﻿@model PagedList.IPagedList<BanHangThoiTrangMVC.Models.EF.Order>
+@using PagedList
+@using PagedList.Mvc
+@{
+    ViewBag.Title = "Hóa Đơn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .rounded-background {
+        display: inline-block;
+        padding: 5px 10px; /* Điều chỉnh lề bên trong thẻ span */
+        background-color: red;
+        color: white; /* Màu văn bản bên trong */
+        border-radius: 45%; /* Để làm cho hình dạng tròn */
+    }
+
+    .rounded-background2 {
+        display: inline-block;
+        padding: 5px 10px; /* Điều chỉnh lề bên trong thẻ span */
+        background-color: lightgreen;
+        color: white; /* Màu văn bản bên trong */
+        border-radius: 45%; /* Để làm cho hình dạng tròn */
+    }
+
+    .rounded-background3 {
+        display: inline-block;
+        padding: 5px 10px; /* Điều chỉnh lề bên trong thẻ span */
+        background-color: yellow;
+        color: black; /* Màu văn bản bên trong */
+        border-radius: 45%; /* Để làm cho hình dạng tròn */
+    }
+
+    .rounded-background4 {
+        display: inline-block;
+        padding: 5px 10px; /* Điều chỉnh lề bên trong thẻ span */
+        background-color: cornflowerblue;
+        color: white; /* Màu văn bản bên trong */
+        border-radius: 45%; /* Để làm cho hình dạng tròn */
+    }
+
+    .custom-container {
+        max-width: 1300px; /* Đặt chiều rộng tối đa của container theo nhu cầu */
+        margin: 0 auto; /* Để căn giữa container trên trang */
+    }
+
+    table.table {
+        border: 1px solid #000; /* Đặt viền đậm với độ dày là 2px */
+        border-collapse: collapse; /* Kết hợp các đường viền để chúng không trùng lấn */
+    }
+
+        table.table th,
+        table.table td {
+            border: 1px solid #000; /* Đặt viền cho các ô trong bảng */
+            padding: 8px; /* Tạo khoảng cách giữa nội dung và viền */
+        }
+</style>
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_styles.css">
+<link rel="stylesheet" type="text/css" href="~/Content/assets/styles/categories_responsive.css">
+<div class="custom-container product_section_container">
+    <div class="row">
+        <div class="col product_section clearfix">
+
+            <!-- Breadcrumbs -->
+
+            <div class="breadcrumbs d-flex flex-row align-items-center">
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>Hóa Đơn</a></li>
+                </ul>
+            </div>
+
+            <!-- Sidebar -->
+            <!-- Main Content -->
+
+            <div class="row">
+                <div class="col-md-12" id="load_data">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr class="table-primary">
+                                <th>STT</th>
+                                <th>Mã Đơn Hàng</th>
+                                <th>Tên Người Mua</th>
+                                <th>SDT</th>
+                                <th>Email</th>
+                                <th>Thành Tiền</th>
+                                <th>Ngày Mua</th>
+                                <th style="text-align:center">Trạng Thái</th>
+                                <th>Phương Thức</th>
+                                <th></th>
+                            </tr>
+                            @if (Model != null && Model.Any())
+                            {
+                                var i = ((ViewBag.Page - 1) * ViewBag.PageSize) + 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@item.Code</td>
+                                        <td>@item.CustomerName</td>
+                                        <td>@item.Phone</td>
+                                        <td>@item.Email</td>
+                                        <td>@BanHangThoiTrangMVC.Common.Common.FormatNumber(item.TotalAmount, 0)</td>
+                                        <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+                                        <td style="text-align:center">
+                                            @if (item.Status == 1)
+                                            {
+                                                <span class="rounded-background3">Đang Chuẩn Bị</span>
+                                            }
+                                            @if (item.Status == 2)
+                                            {
+                                                <span class="rounded-background4">Đang Giao</span>
+                                            }
+                                            @if (item.Status == 3)
+                                            {
+                                                <span class="rounded-background2">Đã Hoàn Thành</span>
+                                            }
+                                            @if (item.Status == 4)
+                                            {
+                                                <span class="rounded-background">Đã Hủy</span>
+                                            }
+                                        </td>
+                                        <td>@(item.TypePayment==1?"COD":"Chuyển Khoản")</td>
+                                        @if (item.Status != 4)
+                                        {
+                                            if (item.Status == 3)
+                                            {
+                                                <td>
+                                                    <a href="/order/vieworder/@item.Id" class="btn btn-sm btn-success">Xem</a>
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td>
+                                                    <a href="/order/vieworder/@item.Id" class="btn btn-sm btn-success">Xem</a>
+                                                    <a href="#" class="btn btn-sm btn-danger btnCancel" data-id="@item.Id">Hủy Đơn</a>
+                                                </td>
+                                            }
+
+                                        }
+
+                                        @if (item.Status == 4)
+                                        {
+                                            <td>
+                                                <span>Đơn Đã Được Hủy</span>
+                                            </td>
+                                        }
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <th colspan="7">Không có hóa đơn nào!!</th>
+                                </tr>
+                            }
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"></div>
+                        <div class="col-6" style="text-align:right;">
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Bạn Xác Nhận Muốn Hủy Đơn</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="txtOrderId" value="0" />
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <select class="form-control" id="ddTrangThai">
+                        <option value="4">
+                            Hủy
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="btnLuu">Hủy</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '.btnCancel', function () {
+                var id = $(this).data("id");
+                $('#txtOrderId').val(id);
+                $('#modal-default').modal('show');
+            });
+
+            $('body').on('click', '#btnLuu', function () {
+                var id = $('#txtOrderId').val();
+                var tt = $('#ddTrangThai').val();
+                $.ajax({
+                    url: '/admin/order/UpdateTT',
+                    type: 'POST',
+                    data: { id: id, trangthai: tt },
+                    success: function (res) {
+                        if (res.Success) {
+                            location.reload();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}
